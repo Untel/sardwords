@@ -1,11 +1,12 @@
 <template>
-    <v-container fluid grid-list-md>
-      <v-layout row wrap>
+    <v-container grid-list-md>
+      <v-layout column wrap>
           <v-textarea
             name="input-7-1"
             label="Inputs"
             v-model="unpersistedWords"
-            :hint="`${wordsCount} words`"
+            @change="persist($event, spliter)"
+            :hint="`${unpersistedWords.split(this.spliter).filter(e => !!e).length} words`"
           ></v-textarea>
       </v-layout>
     </v-container>
@@ -17,6 +18,7 @@
     data() {
       return {
         unpersistedWords: '',
+        spliter: '\n',
       }
     },
     computed: {
@@ -24,9 +26,10 @@
       ...mapGetters(['wordsCount']),
     },
     watch: {
-      unpersistedWords(val) {
-        console.log('yo', val);
-        this.$store.commit('PERSIST_WORDS', val)
+    },
+    methods: {
+      persist(words, spliter = '\n') {
+        this.$store.commit('PERSIST_WORDS', { words, spliter })
       }
     }
   }

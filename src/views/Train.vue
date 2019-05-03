@@ -1,13 +1,9 @@
 <template>
   <v-container fluid fill-height>
       <v-toolbar absolute>
-          <v-slider
-            :max="100"
-            v-model="interval"
-            :label="`Interval ${interval / 10}s`"
-          ></v-slider>
-        <v-spacer/>
-        {{ $store.getters['wordsCount']() }}
+        <span>
+          {{ wordsCount }} words
+        </span>
         <v-btn color="success" @click="start">Start</v-btn>
       </v-toolbar>
       <v-layout class="start-zone" justify-center align-center fill-height>
@@ -17,6 +13,8 @@
 </template>
 
 <script>
+  import { mapState, mapGetters } from 'vuex'
+
   export default {
     data() {
       return {
@@ -25,13 +23,16 @@
         intervalRef: null,
       }
     },
+    computed: {
+      ...mapState(['words']),
+      ...mapGetters(['wordsCount']),
+    },
     methods: {
       start() {
         this.intervalRef = setInterval(() => {
-          const w = this.$store.words;
-          const n = Math.floor(Math.random() * w.length);
-          this.wordSpread = w[n];
-          console.log('word:', this.wordSpread)
+          const n = Math.floor(Math.random() * this.wordsCount);
+          this.wordSpread = this.words[n];
+          console.log('word:', this.wordSpread, n)
         }, this.interval * 100)
       }
     }
