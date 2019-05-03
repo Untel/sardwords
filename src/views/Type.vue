@@ -17,7 +17,7 @@
           </div>
         </v-layout>
         <v-layout fill-height align-center justify-center>
-          <v-text-field @keydown.space="validate" :disabled="!words[idx]" :error="hasError" style="max-width: 400px" box placeholder="Type" v-model="input"></v-text-field>
+          <v-text-field :disabled="!words[idx]" :error="hasError" style="max-width: 400px" box placeholder="Type" v-model="input"></v-text-field>
         </v-layout>
 
       </v-layout>
@@ -85,15 +85,13 @@ import { setInterval } from 'timers';
       ...mapGetters(['wordsCount']),
     },
     methods: {
-      validate(evt) {
-        if (evt) {
-          evt.preventDefault();
-        }
+      validate() {
         if (this.words[this.idx].toLowerCase() === this.input.toLowerCase().trim()) {
           this.idx++;
           this.input = '';
           const now = new Date();
           this.wpm.push(now - this.start);
+          console.log(this.wpm);
           this.avg = Math.round((this.wpm.reduce((prev, next) => prev + next, 0) / this.wpm.length) / 60);
           this.start = null;
         } else {
@@ -103,10 +101,16 @@ import { setInterval } from 'timers';
     },
     watch: {
       input(input) {
+
         if (!this.start) {
           this.start = new Date();
         }
+        console.log('input', input);
         this.hasError = false;
+        if (input[input.length - 1] === ' ') {
+          console.log('val');
+          this.validate();
+        }
       }
     }
   }
