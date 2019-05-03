@@ -14,8 +14,8 @@
         <v-list subheader>
           <v-subheader>Recent chat</v-subheader>
           <v-list-tile
-            v-for="item in doneWords"
-            :key="item.word"
+            v-for="(item, i) in doneWords"
+            :key="`itm-${i}`"
           >
             <v-list-tile-content>
               <v-list-tile-title>{{ item.word }}</v-list-tile-title>
@@ -77,7 +77,10 @@
 
         if (this.input.toLowerCase().trim() === this.todoWord) {
           this.input = '';
-          this.doneWords.push({ word: this.todoWord, audio: this.audio })
+          this.doneWords.unshift({ word: this.todoWord, audio: this.audio })
+          if (this.doneWords.length > 5) {
+            this.doneWords.splice(-1, 1)
+          }
           this.next();
         } else {
           this.hasError = true;

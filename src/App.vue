@@ -8,7 +8,7 @@
         </router-link>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn to="/">Words</v-btn>
+      <v-btn to="/">Settings</v-btn>
       <!-- <v-btn to="train">Train</v-btn> -->
       <v-btn to="type">Type</v-btn>
       <v-btn to="type-audio">Type Audio</v-btn>

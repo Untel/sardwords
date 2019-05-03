@@ -17,7 +17,7 @@
           </div>
         </v-layout>
         <v-layout fill-height align-center justify-center>
-          <v-text-field :error="hasError" style="max-width: 400px" box placeholder="Type" v-model="input"></v-text-field>
+          <v-text-field :disabled="!words[idx]" :error="hasError" style="max-width: 400px" box placeholder="Type" v-model="input"></v-text-field>
         </v-layout>
 
       </v-layout>
