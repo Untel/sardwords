@@ -4,7 +4,11 @@
         <span>
           {{ idx }} / {{ wordsCount }} words
         </span>
-        <v-btn color="success">Start</v-btn>
+        <v-spacer />
+        <!-- <v-checkbox
+          v-model="checkbox"
+          label="Random"
+        ></v-checkbox> -->
       </v-toolbar>
       <v-layout class="start-zone" column fill-height>
         <v-layout row align-center justify-center>
@@ -16,56 +20,46 @@
           <v-text-field :error="hasError" style="max-width: 400px" box placeholder="Type" v-model="input"></v-text-field>
         </v-layout>
 
-        <v-card
-          class="mx-auto"
-          color="grey lighten-4"
-          max-width="600"
-        >
-          <v-card-title>
-            <v-icon
-              :color="checking ? 'red lighten-2' : 'indigo'"
-              class="mr-5"
-              size="64"
-              @click="validate"
-            >
-              mdi-heart-pulse
-            </v-icon>
-            <v-layout
-              column
-              align-start
-            >
-              <div class="caption grey--text text-uppercase">
-                Heart rate
-              </div>
-              <div>
-                <span
-                  class="display-2 font-weight-black"
-                  v-text="avg || '—'"
-                ></span>
-                <strong v-if="avg">WPM</strong>
-              </div>
-            </v-layout>
-
-            <v-spacer></v-spacer>
-
-            <v-btn icon class="align-self-start" size="28">
-              <v-icon>mdi-arrow-right-thick</v-icon>
-            </v-btn>
-          </v-card-title>
-
-          <v-sheet color="transparent">
-            <v-sparkline
-              :key="String(avg)"
-              :smooth="16"
-              :gradient="['#f72047', '#ffd200', '#1feaea']"
-              :line-width="3"
-              :value="wpm"
-              auto-draw
-              stroke-linecap="round"
-            ></v-sparkline>
-          </v-sheet>
-        </v-card>
       </v-layout>
+      <v-card
+        class="wpm-score mx-auto"
+        color="grey lighten-4"
+        max-width="600">
+        <v-card-title>
+          <v-layout
+            column
+            align-start
+          >
+            <div class="caption grey--text text-uppercase">
+              WPM
+            </div>
+            <div>
+              <span
+                class="display-2 font-weight-black"
+                v-text="avg || '—'"
+              ></span>
+              <strong v-if="avg">words per minute</strong>
+            </div>
+          </v-layout>
+
+          <v-spacer></v-spacer>
+
+          <v-btn icon class="align-self-start" size="28">
+            <v-icon>mdi-arrow-right-thick</v-icon>
+          </v-btn>
+        </v-card-title>
+
+        <v-sheet color="transparent">
+          <v-sparkline
+            :key="String(avg)"
+            :smooth="5"
+            :gradient="['green', 'red']"
+            :line-width="4"
+            :value="wpm"
+            stroke-linecap="round"
+          ></v-sparkline>
+        </v-sheet>
+      </v-card>
   </v-container>
 </template>
 
@@ -79,8 +73,10 @@ import { setInterval } from 'timers';
         idx: 0,
         input: '',
         hasError: false,
-        avg: 0,
-        timer: null,
+        avg: null,
+        timerRef: null,
+        start: null,
+        end: null,
         wpm: [],
       }
     },
@@ -90,26 +86,24 @@ import { setInterval } from 'timers';
     },
     methods: {
       validate() {
-        console.log('IS EQUAL ?', this.words[this.idx], this.input, this.words[this.idx] === this.input)
-        if (this.words[this.idx].toLowerCase().trim() === this.input.toLowerCase().trim()) {
+        if (this.words[this.idx].toLowerCase() === this.input.toLowerCase().trim()) {
           this.idx++;
           this.input = '';
+          const now = new Date();
+          this.wpm.push(now - this.start);
+          console.log(this.wpm);
+          this.avg = Math.round((this.wpm.reduce((prev, next) => prev + next, 0) / this.wpm.length) / 60);
+          this.start = null;
         } else {
           this.hasError = true;
         }
       },
-
-      startTimer() {
-        this.timer = setInterval((evt) => {
-          console.log('evt', evt);
-        }, 100);
-      }
     },
     watch: {
       input(input) {
 
-        if (!this.timer) {
-          this.startTimer();
+        if (!this.start) {
+          this.start = new Date();
         }
         console.log('input', input);
         this.hasError = false;
@@ -124,7 +118,7 @@ import { setInterval } from 'timers';
 
 <style scoped>
   .start-zone {
-    margin-top: 128px;
+    padding-top: 64px;
   }
   .word-zone {
 
@@ -136,5 +130,10 @@ import { setInterval } from 'timers';
 
   .words {
     padding: 10px;
+  }
+
+  .wpm-score {
+    position: absolute;
+    right: 0;
   }
 </style>

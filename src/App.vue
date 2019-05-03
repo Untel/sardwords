@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app :dark="isDark">
     <v-toolbar app>
       <v-toolbar-title class="headline text-uppercase">
         <router-link to="/">
@@ -8,9 +8,13 @@
         </router-link>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-
-      <v-btn to="train">Train</v-btn>
+      <v-btn to="/">Words</v-btn>
+      <!-- <v-btn to="train">Train</v-btn> -->
       <v-btn to="type">Type</v-btn>
+      <v-btn to="type-audio">Type Audio</v-btn>
+      <v-btn icon fab @click="isDark = !isDark">
+        <v-icon>highlight</v-icon>
+      </v-btn>
     </v-toolbar>
 
     <v-content>
@@ -25,7 +29,7 @@ export default {
   name: 'App',
   data () {
     return {
-      //
+      isDark: false,
     }
   }
 }

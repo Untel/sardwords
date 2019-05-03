@@ -8,6 +8,15 @@
             @change="persist($event, spliter)"
             :hint="`${unpersistedWords.split(this.spliter).filter(e => !!e).length} words`"
           ></v-textarea>
+          <!-- <v-text-field v-model="_spliter" @change="() => persist($event, spliter)"></v-text-field> -->
+          <v-text-field label="Google API Key" :value="gapikey" @change="$store.commit('SET_API_KEY', $event)"></v-text-field>
+          
+          <!-- <h1>Exclude</h1>
+          <v-layout v-for="(regex, i) in excludes" :key="`excl-${i}`">
+            <v-text-field :value="regex
+            "/>
+          </v-layout>
+          <v-text-field v-model="newExcl" @keydown.enter="() => { $store.commit('ADD_REGEX', $event);  }" /> -->
       </v-layout>
     </v-container>
 </template>
@@ -21,15 +30,18 @@
         spliter: '\n',
       }
     },
+    mounted() {
+      this.unpersistedWords = this.$store.state.words.join(this.spliter);
+    },
     computed: {
-      ...mapState(['words']),
+      ...mapState(['words', 'excludes', 'gapikey']),
       ...mapGetters(['wordsCount']),
     },
     watch: {
     },
     methods: {
-      persist(words, spliter = '\n') {
-        this.$store.commit('PERSIST_WORDS', { words, spliter })
+      persist(words, spliter) {
+        this.$store.commit('PERSIST_WORDS', { words, spliter: spliter });
       }
     }
   }

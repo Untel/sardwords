@@ -4,10 +4,12 @@
         <span>
           {{ wordsCount }} words
         </span>
+        <v-spacer/>
+        <v-slider max="2000" v-model="interval" @change="start" />
         <v-btn color="success" @click="start">Start</v-btn>
       </v-toolbar>
       <v-layout class="start-zone" justify-center align-center fill-height>
-        <div class="word-zone">{{ wordSpread }}</div>
+        <div class="display-6 word-zone">{{ wordSpread }}</div>
       </v-layout>
   </v-container>
 </template>
