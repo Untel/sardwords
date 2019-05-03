@@ -4,9 +4,15 @@
         <v-btn v-if="audio" small icon @click="audio.play()">
           <v-icon>play_arrow</v-icon>
         </v-btn>
+
         <v-spacer/>
-        <v-btn v-if="audio" small icon>
-          <v-icon @click="giveHelp()">help_outline</v-icon>
+        <div style="letter-spacing: 4px;" v-if="helper">
+          <span v-for="(w, i) in helper" :key="`help-${i}`">
+            {{ w.shown ? w.letter : '_' }}
+          </span>
+        </div>
+        <v-btn small icon @click="giveHelp()">
+          <v-icon>help_outline</v-icon>
         </v-btn>
 
       </v-toolbar>
@@ -45,6 +51,7 @@
         audio: null,
         hasError: false,
         doneWords: [],
+        helper: null,
       }
     },
 
@@ -81,11 +88,33 @@
           if (this.doneWords.length > 5) {
             this.doneWords.splice(-1, 1)
           }
+          this.helper = null;
           this.next();
         } else {
           this.hasError = true;
         }
       },
+
+      giveHelp() {
+        if (this.todoWord) {
+          if (!this.helper) {
+            this.helper = this.todoWord.split('').map((letter, index) => ({
+              letter,
+              index,
+              shown: false,
+            }));
+          } else {
+            const unvisible = this.helper.filter(w => !w.shown);
+            if (unvisible.length > 0) {
+              const idx = Math.floor(Math.random() * unvisible.length);
+              const helper = [...this.helper];
+              console.log(helper, this.helper, idx, unvisible);
+              helper[unvisible[idx].index].shown = true;
+              this.helper = [...helper];
+            }
+          }
+        }
+      }
       
     },
     watch: {
