@@ -61,14 +61,14 @@
                 align-start
               >
                 <div class="caption grey--text text-uppercase">
-                  WPM
+                  Words per minutes
                 </div>
                 <div v-if="timerRef">
                   <span
                     class="display-2 font-weight-black"
                     v-text="avg || '—'"
                   ></span>
-                  <strong v-if="avg">words per minute</strong>
+                  <strong v-if="avg">W/m</strong>
                 </div>
                 <div v-else>
                   <v-icon>pause</v-icon>
