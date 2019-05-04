@@ -53,7 +53,7 @@
           </v-text-field>
           <v-card
             class="wpm-score mx-auto"
-            color="grey lighten-4"
+            color="lighten-4"
             max-width="600">
             <v-card-title>
               <v-layout
