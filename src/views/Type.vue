@@ -12,14 +12,25 @@
         <v-text-field label="Go to" @keydown.enter="goto"></v-text-field>
       </v-toolbar>
       <v-layout class="start-zone" column fill-height>
-        <v-layout row align-center justify-center>
-          <div class="words display-2" :class="{ 'active-word': n === 1 }" v-for="n in 3" :key="n">
-            {{ words[parseInt(idx) + n - 1] }}
-          </div>
+        <v-layout row align-center justify-center class="display-words">
+          <div class="display-1">{{ words[parseInt(idx) - 1] }}</div>
+          <div class="display-1">{{ words[parseInt(idx) - 1] }}</div>
+          <div class="display-3 active-word">{{ words[parseInt(idx)] }}</div>
+          <div class="display-2">{{ words[parseInt(idx) + 1] }}</div>
+          <div class="display-1">{{ words[parseInt(idx) + 2] }}</div>
         </v-layout>
         <v-layout column align-center justify-center>
-          <v-text-field @keydown.space="validate" :disabled="!words[idx]" :error="hasError" style="max-width: 400px" box placeholder="Type" v-model="input"></v-text-field>
-            <v-card
+          <v-text-field
+            @blur="pauseTimer"
+            @keydown.space="validate"
+            :disabled="!words[idx]"
+            :error="hasError"
+            style="max-width: 400px"
+            box
+            placeholder="Type"
+            v-model="input">
+          </v-text-field>
+          <v-card
             class="wpm-score mx-auto"
             color="grey lighten-4"
             max-width="600">
@@ -31,12 +42,16 @@
                 <div class="caption grey--text text-uppercase">
                   WPM
                 </div>
-                <div>
+                <div v-if="timerRef">
                   <span
                     class="display-2 font-weight-black"
                     v-text="avg || '—'"
                   ></span>
                   <strong v-if="avg">words per minute</strong>
+                </div>
+                <div v-else>
+                  <v-icon>pause</v-icon>
+                  <strong>Pause</strong>
                 </div>
               </v-layout>
 
@@ -58,11 +73,8 @@
               ></v-sparkline>
             </v-sheet>
           </v-card>
-        
         </v-layout>
-
       </v-layout>
-
   </v-container>
 </template>
 
@@ -74,11 +86,11 @@
         idx: localStorage.getItem('wordindex') || 0,
         input: '',
         hasError: false,
+
         avg: null,
-        timerRef: null,
-        start: null,
-        end: null,
         wpm: [],
+        timerRef: null,
+        wordAtTen: 0,
       }
     },
     computed: {
@@ -98,24 +110,35 @@
         if (evt) {
           evt.preventDefault();
         }
-        console.log(this.words[this.idx], this.input)
+
         if (this.words[this.idx].toLowerCase().trim() === this.input.toLowerCase().trim()) {
           this.idx++;
           localStorage.setItem('wordindex', this.idx);
           this.input = '';
-          const now = new Date();
-          this.wpm.push(now - this.start);
-          this.avg = Math.round((this.wpm.reduce((prev, next) => prev + next, 0) / this.wpm.length) / 60);
-          this.start = null;
+          this.wordAtTen++;
         } else {
           this.hasError = true;
         }
       },
+      pauseTimer() {
+        if (this.timerRef) {
+          clearInterval(this.timerRef);
+          this.wpmTick();
+          this.timerRef = null;
+        }
+      },
+      
+      wpmTick() {
+        this.wpm.push(this.wordAtTen * 10);
+        const avg = this.wpm.reduce((p, n) => p + n , 0) / this.wpm.length;
+        this.avg = Math.round(avg * 100) / 100;        this.wordAtTen = 0;
+        this.charAtTen = 1;
+      }
     },
     watch: {
       input(input) {
-        if (!this.start) {
-          this.start = new Date();
+        if (!this.timerRef) {
+          this.timerRef = setInterval(() => this.wpmTick(), 6 * 1000)
         }
         this.hasError = false;
       }
@@ -131,16 +154,15 @@
 
   }
   .active-word {
-    font-size: 64px;
     color: green;
   }
 
   .words {
     padding: 10px;
   }
-
-  .wpm-score {
-    /* position: absolute;
-    right: 0; */
+  
+  .display-words > div {
+    padding: 7px;
   }
+
 </style>
