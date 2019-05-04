@@ -31,10 +31,7 @@ export default new Vuex.Store({
       const n = Math.floor(Math.random() * this.wordsCount);
       return state.words[n]
     },
-    async genAudio({ commit, state }, word) {
-      if (state.audios[word]) {
-        return state.audios[word];
-      }
+    async genAudio({ commit, state }, { word, voice }) {
 
       if (!state.gapikey) {
         alert('API Key required');
@@ -46,7 +43,7 @@ export default new Vuex.Store({
           input: { text: word },
           voice:{
             'languageCode':'fr-fr',
-            'name':'fr-FR-Standard-A',
+            'name':'fr-FR-Standard-' + voice,
             'ssmlGender' : 'FEMALE'
           },
           audioConfig: {
@@ -54,7 +51,7 @@ export default new Vuex.Store({
           }
         });
         const audio = new Audio('data:audio/mp3;base64,' + res.data.audioContent);
-        commit('SET_WORD_AUDIO', {word, audio})
+        // commit('SET_WORD_AUDIO', {word, audio})
         return audio;
       } catch(err) {
         alert('Failed to call api ' + err.message)

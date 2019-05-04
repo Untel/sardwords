@@ -1,9 +1,14 @@
 <template>
   <v-container fluid fill-height>
       <v-toolbar absolute>
-        <v-btn v-if="audio" small icon @click="audio.play()">
-          <v-icon>play_arrow</v-icon>
-        </v-btn>
+        <template>
+          <v-btn small icon @click="audio.play()">
+            <v-icon>play_arrow</v-icon>
+          </v-btn>
+          <v-btn v-for="voice in ['B', 'C', 'D']" :key="voice" small icon @click="playVoice(voice)">
+            <v-icon>play_arrow</v-icon>
+          </v-btn>
+        </template>
 
         <v-spacer/>
         <div style="letter-spacing: 4px;" v-if="helper">
@@ -49,6 +54,7 @@
         input: '',
         todoWord: null,
         audio: null,
+        otherAudios: {},
         hasError: false,
         doneWords: [],
         helper: null,
@@ -68,8 +74,17 @@
       ...mapActions(['genAudio']),
       async next() {
         this.todoWord = this.getRandomWord();
-        this.audio = await this.genAudio(this.todoWord);
+        this.audio = await this.genAudio({ word: this.todoWord, voice: 'A' } );
         this.audio.play();
+      },
+
+      async playVoice(voice) {
+        if (this.otherAudios[voice]) {
+          this.otherAudios[voice].play();
+        } else {
+          this.otherAudios[voice] = await this.genAudio({ word: this.todoWord, voice } );
+          this.otherAudios[voice].play();
+        }
       },
 
       getRandomWord() {
@@ -82,8 +97,9 @@
           $event.preventDefault();
         }
 
-        if (this.input.toLowerCase().trim() === this.todoWord) {
+        if (this.input.toLowerCase().trim() === this.todoWord.toLowerCase().trim()) {
           this.input = '';
+          this.otherAudios = {};
           this.doneWords.unshift({ word: this.todoWord, audio: this.audio })
           if (this.doneWords.length > 5) {
             this.doneWords.splice(-1, 1)

@@ -5,11 +5,11 @@
             name="input-7-1"
             label="Inputs"
             v-model="unpersistedWords"
+            rows="20"
             @change="persist($event, spliter)"
-            :hint="`${unpersistedWords.split(this.spliter).filter(e => !!e).length} words`"
           ></v-textarea>
           <!-- <v-text-field v-model="_spliter" @change="() => persist($event, spliter)"></v-text-field> -->
-          <v-text-field label="Google API Key" :value="gapikey" @change="$store.commit('SET_API_KEY', $event)"></v-text-field>
+          <!-- <v-text-field label="Google API Key" :value="gapikey" @change="$store.commit('SET_API_KEY', $event)"></v-text-field> -->
           
           <!-- <h1>Exclude</h1>
           <v-layout v-for="(regex, i) in excludes" :key="`excl-${i}`">
