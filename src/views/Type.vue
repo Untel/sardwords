@@ -9,6 +9,7 @@
           v-model="checkbox"
           label="Random"
         ></v-checkbox> -->
+        <v-text-field label="Go to" @keydown.enter="goto"></v-text-field>
       </v-toolbar>
       <v-layout class="start-zone" column fill-height>
         <v-layout row align-center justify-center>
@@ -65,12 +66,10 @@
 
 <script>
   import { mapState, mapGetters } from 'vuex'
-import { setInterval } from 'timers';
-
   export default {
     data() {
       return {
-        idx: 0,
+        idx: localStorage.getItem('wordindex') || 0,
         input: '',
         hasError: false,
         avg: null,
@@ -85,12 +84,20 @@ import { setInterval } from 'timers';
       ...mapGetters(['wordsCount']),
     },
     methods: {
+      goto(evt) {
+        const word = evt.target.value;
+        const idx = this.words.indexOf(word);
+        if (idx !== -1) {
+          this.idx = idx;
+        }
+      },
       validate(evt) {
         if (evt) {
           evt.preventDefault();
         }
-        if (this.words[this.idx].toLowerCase() === this.input.toLowerCase().trim()) {
+        if (this.words[this.idx].toLowerCase().trim() === this.input.toLowerCase().trim()) {
           this.idx++;
+          localStorage.setItem('wordindex', this.idx);
           this.input = '';
           const now = new Date();
           this.wpm.push(now - this.start);
