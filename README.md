@@ -1,31 +1,6 @@
-https://untel.github.io/sardwords/#/type
+Preview: https://untel.github.io/sardwords/#/type
 
 # sardwords
-
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Done for the french streamer Sardoche, while training for a dictation, decided to copy the whole french dictionnary.
+Allow you to set a list of word, and recopy them as fast as possibly.
+A mode allow to use Google API to dict words in different voices.
