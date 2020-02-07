@@ -13,8 +13,8 @@
       </v-toolbar>
       <v-layout class="start-zone" column fill-height>
         <v-layout row align-center justify-center class="display-words">
-          <div class="display-1">{{ words[parseInt(idx) - 1] }}</div>
-          <div class="display-1">{{ words[parseInt(idx) - 1] }}</div>
+          <div class="display-1" v-if="parseInt(idx) > 1">{{ words[parseInt(idx) - 2] }}</div>
+          <div class="display-1" v-if="parseInt(idx) > 0">{{ words[parseInt(idx) - 1] }}</div>
           <div class="display-3 active-word">{{ words[parseInt(idx)] }}</div>
           <div class="display-2">{{ words[parseInt(idx) + 1] }}</div>
           <div class="display-1">{{ words[parseInt(idx) + 2] }}</div>
